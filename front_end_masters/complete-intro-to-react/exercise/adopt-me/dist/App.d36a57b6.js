@@ -30877,8 +30877,6 @@ var _jsxRuntime = require("react/jsx-runtime");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// we know longer need to import react
-// import React from "react";
 const App = () => {
   return (
     /*#__PURE__*/
@@ -30925,7 +30923,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53810" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52315" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

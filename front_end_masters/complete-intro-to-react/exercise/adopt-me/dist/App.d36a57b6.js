@@ -29566,7 +29566,53 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react-dom.development.js');
 }
-},{"./cjs/react-dom.development.js":"../node_modules/react-dom/cjs/react-dom.development.js"}],"../node_modules/react/cjs/react-jsx-runtime.development.js":[function(require,module,exports) {
+},{"./cjs/react-dom.development.js":"../node_modules/react-dom/cjs/react-dom.development.js"}],"useBreedList.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = useBreedList;
+
+var _react = require("react");
+
+// Were making a custom hook here for example, isn't actually neccassry for this functionality.
+const localCache = {};
+
+function useBreedList(animal) {
+  // Custom hooks almost always make use of preexisting hooks like useState.
+  const [breedList, setBreedList] = (0, _react.useState)([]);
+  const [status, setStatus] = (0, _react.useState)("unloaded"); // Status here inst really neccessary, but is good practice, to keep track of the state of the hook, usually unloaded, loading, loaded.
+
+  (0, _react.useEffect)(() => {
+    if (!animal) {
+      // if user hasnt selected animal, then breed list is empty
+      setBreedList([]);
+    } else if (localCache[animal]) {
+      //if user selects an animal they have previously selected, then the breedList will be loaded from cache var, instead of api call
+      setBreedList(localCache[animal]);
+    } else {
+      // else make the api call
+      requestBreedList();
+    }
+
+    async function requestBreedList() {
+      //clears breedlist first
+      setBreedList([]);
+      setStatus("loading");
+      const res = await fetch(`http://pets-v2.dev-apis.com/breeds?animal=${animal}`);
+      const json = await res.json(); //set the local cache key for this animal to the api response or nothing if errored
+
+      localCache[animal] = json.breeds || [];
+      setBreedList(localCache[animal]);
+      setStatus("loaded");
+    }
+  }, [animal]); // this useEffect will be triggered only when the state of animal changes, thanks to the 2nd argument [animal]
+  //We're returning two things back to the consumer of this custom hook: a list of breeds (including an empty list when it doesn't have anything in it) and an enumerated type of the status of the hook: unloaded, loading, or loaded.
+
+  return [breedList, status];
+}
+},{"react":"../node_modules/react/index.js"}],"../node_modules/react/cjs/react-jsx-runtime.development.js":[function(require,module,exports) {
 /** @license React v17.0.1
  * react-jsx-runtime.development.js
  *
@@ -30775,7 +30821,40 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react-jsx-runtime.development.js');
 }
-},{"./cjs/react-jsx-runtime.development.js":"../node_modules/react/cjs/react-jsx-runtime.development.js"}],"SearchParams.js":[function(require,module,exports) {
+},{"./cjs/react-jsx-runtime.development.js":"../node_modules/react/cjs/react-jsx-runtime.development.js"}],"Pet.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _jsxRuntime = require("react/jsx-runtime");
+
+const Pet = props => {
+  return (
+    /*#__PURE__*/
+    (0, _jsxRuntime.jsxs)("div", {
+      children: [
+      /*#__PURE__*/
+      (0, _jsxRuntime.jsx)("h1", {
+        children: props.name
+      }),
+      /*#__PURE__*/
+      (0, _jsxRuntime.jsx)("h2", {
+        children: props.animal
+      }),
+      /*#__PURE__*/
+      (0, _jsxRuntime.jsx)("h2", {
+        children: props.breed
+      })]
+    })
+  );
+};
+
+var _default = Pet;
+exports.default = _default;
+},{"react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"SearchParams.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30785,22 +30864,44 @@ exports.default = void 0;
 
 var _react = require("react");
 
+var _useBreedList = _interopRequireDefault(require("./useBreedList"));
+
+var _Pet = _interopRequireDefault(require("./Pet"));
+
 var _jsxRuntime = require("react/jsx-runtime");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
 
 const SearchParams = () => {
   const [animal, updateAnimal] = (0, _react.useState)("");
-  const [location, updateLocation] = (0, _react.useState)("");
+  const [location, updateLocation] = (0, _react.useState)("Seattle, WA");
   const [breed, updateBreed] = (0, _react.useState)("");
-  const breeds = [];
+  const [pets, setPets] = (0, _react.useState)([]);
+  const [breeds] = (0, _useBreedList.default)(animal);
+  (0, _react.useEffect)(() => {
+    requestPets();
+  }, []);
+
+  async function requestPets() {
+    const res = await fetch(`http://pets-v2.dev-apis.com/pets?animal=${animal}&location=${location}&breed=${breed}`);
+    const json = await res.json();
+    console.log(json);
+    setPets(json.pets);
+  }
+
   return (
     /*#__PURE__*/
-    (0, _jsxRuntime.jsx)("div", {
+    (0, _jsxRuntime.jsxs)("div", {
       className: "search-params",
-      children:
+      children: [
       /*#__PURE__*/
       (0, _jsxRuntime.jsxs)("form", {
+        onSubmit: e => {
+          e.preventDefault();
+          requestPets();
+        },
         children: [
         /*#__PURE__*/
         (0, _jsxRuntime.jsxs)("label", {
@@ -30859,14 +30960,20 @@ const SearchParams = () => {
         (0, _jsxRuntime.jsx)("button", {
           children: "Submit"
         })]
-      })
+      }), pets.map(pet =>
+      /*#__PURE__*/
+      (0, _jsxRuntime.jsx)(_Pet.default, {
+        name: pet.name,
+        animal: pet.animal,
+        breed: pet.breed
+      }, pet.id))]
     })
   );
 };
 
 var _default = SearchParams;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./useBreedList":"useBreedList.js","./Pet":"Pet.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 var _reactDom = require("react-dom");
@@ -30923,7 +31030,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52315" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51977" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

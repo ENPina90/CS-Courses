@@ -35270,7 +35270,7 @@ class Carousel extends _react.Component {
 
 var _default = Carousel;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"Details.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"ErrorBoundary.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -35282,7 +35282,60 @@ var _react = require("react");
 
 var _reactRouterDom = require("react-router-dom");
 
+var _jsxRuntime = require("react/jsx-runtime");
+
+class ErrorBoundary extends _react.Component {
+  state = {
+    hasError: false
+  };
+
+  static getDerivedStateFromError() {
+    return {
+      hasError: true
+    };
+  }
+
+  componentDidCatch(error, info) {
+    console.error("ErrorBoundary caught an error", error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        /*#__PURE__*/
+        (0, _jsxRuntime.jsxs)("h2", {
+          children: ["There was an error with this listing. ",
+          /*#__PURE__*/
+          (0, _jsxRuntime.jsx)(_reactRouterDom.Link, {
+            to: "/",
+            children: "Click here"
+          }), " ", "to back to the home page or wait five seconds."]
+        })
+      );
+    }
+
+    return this.props.children;
+  }
+
+}
+
+var _default = ErrorBoundary;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"Details.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = DetailsErrorBoundary;
+
+var _react = require("react");
+
+var _reactRouterDom = require("react-router-dom");
+
 var _Carousel = _interopRequireDefault(require("./Carousel"));
+
+var _ErrorBoundary = _interopRequireDefault(require("./ErrorBoundary"));
 
 var _jsxRuntime = require("react/jsx-runtime");
 
@@ -35355,10 +35408,20 @@ class Details extends _react.Component {
 
 }
 
-var _default = (0, _reactRouterDom.withRouter)(Details);
+const DetailsWithRouter = (0, _reactRouterDom.withRouter)(Details);
 
-exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./Carousel":"Carousel.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"App.js":[function(require,module,exports) {
+function DetailsErrorBoundary(props) {
+  return (
+    /*#__PURE__*/
+    (0, _jsxRuntime.jsx)(_ErrorBoundary.default, {
+      children:
+      /*#__PURE__*/
+      (0, _jsxRuntime.jsx)(DetailsWithRouter, { ...props
+      })
+    })
+  );
+}
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./Carousel":"Carousel.js","./ErrorBoundary":"ErrorBoundary.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 var _react = require("react");

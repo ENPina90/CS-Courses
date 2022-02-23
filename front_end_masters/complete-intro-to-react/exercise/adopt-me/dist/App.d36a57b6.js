@@ -35197,7 +35197,7 @@ const SearchParams = () => {
 
 var _default = SearchParams;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","./useBreedList":"useBreedList.js","./Results":"Results.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"Details.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./useBreedList":"useBreedList.js","./Results":"Results.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"Carousel.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -35205,25 +35205,160 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _reactRouterDom = require("react-router-dom");
+var _react = require("react");
 
 var _jsxRuntime = require("react/jsx-runtime");
 
-const Details = () => {
-  const {
-    id
-  } = (0, _reactRouterDom.useParams)();
-  return (
-    /*#__PURE__*/
-    (0, _jsxRuntime.jsx)("h2", {
-      children: id
-    })
-  );
-};
+class Carousel extends _react.Component {
+  state = {
+    // the 0 will eventually refer to the index[0] of the images array
+    active: 0
+  }; // static sets a class variable defaultProps default image
 
-var _default = Details;
+  static defaultProps = {
+    images: ["http://pets-images.dev-apis.com/pets/none.jpg"]
+  }; // add event listener
+  // this has to be an arror function, because a normal function would create a new this in the context of the browser click, which would be undefined. Here the arrow function inherits the this of the class
+
+  handleIndexClick = event => {
+    this.setState({
+      // simplest way to convert a string to a number
+      active: +event.target.dataset.index
+    });
+  };
+
+  render() {
+    // again {} just destructure data, so it creates a new var from the state or prop key/value pair of the same name
+    const {
+      active
+    } = this.state;
+    const {
+      images
+    } = this.props;
+    console.log(images);
+    return (
+      /*#__PURE__*/
+      (0, _jsxRuntime.jsxs)("div", {
+        className: "carousel",
+        children: [
+        /*#__PURE__*/
+        (0, _jsxRuntime.jsx)("img", {
+          src: images[active],
+          alt: "animal"
+        }),
+        /*#__PURE__*/
+        (0, _jsxRuntime.jsx)("div", {
+          className: "carousel-smaller",
+          children: images.map((photo, index) =>
+          /*#__PURE__*/
+          (0, _jsxRuntime.jsx)("img", {
+            src: photo // ternary operator comparing the current index to the number stored in active, if matches, assigns active class
+            ,
+            className: index === active ? "active" : "" //onClick is the event listener
+            ,
+            onClick: this.handleIndexClick //data-index allows us to pass the index of the current image to our event handler
+            ,
+            "data-index": index,
+            alt: "animal thumbnail"
+          }, photo))
+        })]
+      })
+    );
+  }
+
+}
+
+var _default = Carousel;
 exports.default = _default;
-},{"react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"Details.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = require("react");
+
+var _reactRouterDom = require("react-router-dom");
+
+var _Carousel = _interopRequireDefault(require("./Carousel"));
+
+var _jsxRuntime = require("react/jsx-runtime");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class Details extends _react.Component {
+  state = {
+    loading: true
+  };
+
+  async componentDidMount() {
+    const res = await fetch(`http://pets-v2.dev-apis.com/pets?id=${this.props.match.params.id}`);
+    const json = await res.json();
+    this.setState(Object.assign({
+      loading: false
+    }, json.pets[0]));
+  }
+
+  render() {
+    if (this.state.loading) {
+      return (
+        /*#__PURE__*/
+        (0, _jsxRuntime.jsx)("h2", {
+          children: "loading \u2026 "
+        })
+      );
+    }
+
+    const {
+      animal,
+      breed,
+      city,
+      state,
+      description,
+      name,
+      images
+    } = this.state;
+    return (
+      /*#__PURE__*/
+      (0, _jsxRuntime.jsxs)("div", {
+        className: "details",
+        children: [
+        /*#__PURE__*/
+        (0, _jsxRuntime.jsx)(_Carousel.default, {
+          images: images
+        }),
+        /*#__PURE__*/
+        (0, _jsxRuntime.jsxs)("div", {
+          children: [
+          /*#__PURE__*/
+          (0, _jsxRuntime.jsx)("h1", {
+            children: name
+          }),
+          /*#__PURE__*/
+          (0, _jsxRuntime.jsx)("h2", {
+            children: `${animal} — ${breed} — ${city}, ${state}`
+          }),
+          /*#__PURE__*/
+          (0, _jsxRuntime.jsxs)("button", {
+            children: ["Adopt ", name]
+          }),
+          /*#__PURE__*/
+          (0, _jsxRuntime.jsx)("p", {
+            children: description
+          })]
+        })]
+      })
+    );
+  }
+
+}
+
+var _default = (0, _reactRouterDom.withRouter)(Details);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./Carousel":"Carousel.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 var _react = require("react");
@@ -35315,7 +35450,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51977" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55979" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -35321,7 +35321,52 @@ class ErrorBoundary extends _react.Component {
 
 var _default = ErrorBoundary;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"Details.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"Modal.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _reactDom = require("react-dom");
+
+var _jsxRuntime = require("react/jsx-runtime");
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+const modalRoot = document.getElementById("modal");
+
+const Modal = ({
+  children
+}) => {
+  const elRef = (0, _react.useRef)(null);
+
+  if (!elRef.current) {
+    elRef.current = document.createElement("div");
+  }
+
+  (0, _react.useEffect)(() => {
+    modalRoot.appendChild(elRef.current);
+    return () => modalRoot.removeChild(elRef.current);
+  }, []);
+  return (
+    /*#__PURE__*/
+    (0, _reactDom.createPortal)(
+    /*#__PURE__*/
+    (0, _jsxRuntime.jsx)("div", {
+      children: children
+    }), elRef.current)
+  );
+};
+
+var _default = Modal;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"Details.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -35337,13 +35382,16 @@ var _Carousel = _interopRequireDefault(require("./Carousel"));
 
 var _ErrorBoundary = _interopRequireDefault(require("./ErrorBoundary"));
 
+var _Modal = _interopRequireDefault(require("./Modal"));
+
 var _jsxRuntime = require("react/jsx-runtime");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Details extends _react.Component {
   state = {
-    loading: true
+    loading: true,
+    showModal: false
   };
 
   async componentDidMount() {
@@ -35353,6 +35401,11 @@ class Details extends _react.Component {
       loading: false
     }, json.pets[0]));
   }
+
+  toggleModal = () => this.setState({
+    showModal: !this.state.showModal
+  });
+  adopt = () => window.location = "http://bit.ly/pet-adopt";
 
   render() {
     if (this.state.loading) {
@@ -35371,7 +35424,8 @@ class Details extends _react.Component {
       state,
       description,
       name,
-      images
+      images,
+      showModal
     } = this.state;
     return (
       /*#__PURE__*/
@@ -35395,12 +35449,40 @@ class Details extends _react.Component {
           }),
           /*#__PURE__*/
           (0, _jsxRuntime.jsxs)("button", {
+            onClick: this.toggleModal,
             children: ["Adopt ", name]
           }),
           /*#__PURE__*/
           (0, _jsxRuntime.jsx)("p", {
             children: description
-          })]
+          }), showModal ?
+          /*#__PURE__*/
+          (0, _jsxRuntime.jsx)(_Modal.default, {
+            children:
+            /*#__PURE__*/
+            (0, _jsxRuntime.jsxs)("div", {
+              children: [
+              /*#__PURE__*/
+              (0, _jsxRuntime.jsxs)("h1", {
+                children: ["Would you like to adopt ", name, "?"]
+              }),
+              /*#__PURE__*/
+              (0, _jsxRuntime.jsxs)("div", {
+                className: "buttons",
+                children: [
+                /*#__PURE__*/
+                (0, _jsxRuntime.jsx)("button", {
+                  onClick: this.adopt,
+                  children: "Yes"
+                }),
+                /*#__PURE__*/
+                (0, _jsxRuntime.jsx)("button", {
+                  onClick: this.toggleModal,
+                  children: "No"
+                })]
+              })]
+            })
+          }) : null]
         })]
       })
     );
@@ -35421,7 +35503,7 @@ function DetailsErrorBoundary(props) {
     })
   );
 }
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./Carousel":"Carousel.js","./ErrorBoundary":"ErrorBoundary.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./Carousel":"Carousel.js","./ErrorBoundary":"ErrorBoundary.js","./Modal":"Modal.js","react/jsx-runtime":"../node_modules/react/jsx-runtime.js"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 var _react = require("react");
